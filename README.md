@@ -13,3 +13,11 @@ DB_USERNAME => Usuário do banco de dados.
 DB_PASSWORD => Senha do usuário do banco de dados.
 
 DB_HOST => Endereço do banco de dados.
+
+### Docker Compose
+Configurado com volumes para rodar no docker-compose sem a camada do k8s.
+
+### Rodando em k8s local (k3d)
+_k3d cluster create devops --agents 2 -p "8080:30300@loadbalancer"_
+
+No meu caso, escolhi usar um service "NodePort" e expor a porta 30300. No k3d configurei para a porta 8080 -> 30300.

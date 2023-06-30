@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops2023-webapp-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: diedona/kube-news-devops2023
+        ports:
+        - containerPort: 8080
+        env:
+          - name: DB_DATABASE
+            value: dbDevops2023
+          - name: DB_USERNAME
+            value: dbUser
+          - name: DB_PASSWORD
+            value: db123
+          - name: DB_HOST
+            value: db-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  type: NodePort
+  selector:
+    app: webapp
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30300
