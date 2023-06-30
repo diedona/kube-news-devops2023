@@ -18,6 +18,8 @@ DB_HOST => Endereço do banco de dados.
 Configurado com volumes para rodar no docker-compose sem a camada do k8s.
 
 ### Rodando em k8s local (k3d)
-_k3d cluster create devops --agents 2 -p "8080:30300@loadbalancer"_
+_mkdir -p C:/k3d/tmp/k3dvol_
+_k3d cluster create devops --agents 2 -p "8080:30300@loadbalancer" --volume C:/k3d/tmp/k3dvol:/tmp/k3dvol_
 
 No meu caso, escolhi usar um service "NodePort" e expor a porta 30300. No k3d configurei para a porta 8080 -> 30300.
+Também estou utilizando um persistent volume em "C:/k3d/tmp/k3dvol:/tmp/k3dvol".

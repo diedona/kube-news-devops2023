@@ -1,3 +1,32 @@
+# VOLUMES PARA PERSISTÊNCIA
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-pv
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/tmp/k3dvol"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-local-pvc
+spec:
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+---
+# DEPLOY DO BANCO POSTGRES
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,6 +41,10 @@ spec:
       labels:
         app: db
     spec:
+      volumes:
+        - name: db-volume
+          persistentVolumeClaim: 
+            claimName: db-local-pvc
       containers:
       - name: db
         image: postgres:15.3-alpine3.18
@@ -24,7 +57,11 @@ spec:
             value: dbUser
           - name: POSTGRES_PASSWORD
             value: db123
+        volumeMounts:
+          - mountPath: "/var/lib/postgresql/data"
+            name: db-volume
 ---
+# SERVICE PRA COMUNICAÇÃO INTERNA
 apiVersion: v1
 kind: Service
 metadata:
