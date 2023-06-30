@@ -1,0 +1,37 @@
+services:
+  devops2023_db:
+    image: postgres:15.3-alpine3.18
+    container_name: dbPostgres
+    environment:
+      - POSTGRES_DB=dbDevops2023
+      - POSTGRES_USER=dbUser
+      - POSTGRES_PASSWORD=db123
+    ports:
+      - 5432:5432
+    networks:
+      - devops2023
+    volumes:
+      - pgData:/var/lib/postgresql/data
+
+  devops2023_webapp:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - devops2023
+    environment:
+      - DB_DATABASE=dbDevops2023
+      - DB_USERNAME=dbUser
+      - DB_PASSWORD=db123
+      - DB_HOST=devops2023_db
+    depends_on:
+      - devops2023_db
+
+networks:
+  devops2023:
+
+volumes:
+  pgData:
